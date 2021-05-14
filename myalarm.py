@@ -5,18 +5,22 @@ from tkinter import *
 from tkinter import messagebox
 
 # Color
-purple = "#6a4c93"
-blue = "#1982c4"
-red = "#ff595e"
-yellow = "#ffca3a"
-green = "#8ac926"
+timerEntryBG = "#cfff24"
+timerEntryFG = "black"
+btnBG = "#ee1982"
+btnFG = "#cfff24"
+background = "#23bbe2"
+labelBG = background
+labelFG = "black"
+taskLabelGB = background
+taskLabelFG = "black"
 
 # creating Tk window
 root = Tk()
 
 # setting geometry of tk window
 root.geometry("300x250")
-root['background'] = purple
+root['background'] = background
 
 # Using title() to display a message in
 # the dialogue box of the message in the
@@ -45,37 +49,37 @@ csecond.set("00")
 
 repeat.set("00")
 
-worklabel = Label(root, text="Work", bg=purple, fg="white")
+worklabel = Label(root, text="Work", font=("Arial",10,""), bg=labelBG, fg=labelFG)
 worklabel.place(x=40,y=20)
 
-chilllabel = Label(root, text="Break", bg=purple, fg="white")
+chilllabel = Label(root, text="Break", font=("Arial",10,""), bg=labelBG, fg=labelFG)
 chilllabel.place(x=40,y=60)
 
 # Use of Entry class to take input from the user
-hourEntry= Entry(root, width=3, font=("Arial",18,""), textvariable=hour, bg=yellow)
+hourEntry= Entry(root, width=3, font=("Arial",18,""), textvariable=hour, bg=timerEntryBG, fg=timerEntryFG)
 hourEntry.place(x=80,y=20)
 
-minuteEntry= Entry(root, width=3, font=("Arial",18,""), textvariable=minute, bg=yellow)
+minuteEntry= Entry(root, width=3, font=("Arial",18,""), textvariable=minute, bg=timerEntryBG, fg=timerEntryFG)
 minuteEntry.place(x=130,y=20)
 
-secondEntry= Entry(root, width=3, font=("Arial",18,""), textvariable=second, bg=yellow)
+secondEntry= Entry(root, width=3, font=("Arial",18,""), textvariable=second, bg=timerEntryBG, fg=timerEntryFG)
 secondEntry.place(x=180,y=20)
 
 # Chill
-chillhourEntry= Entry(root, width=3, font=("Arial",18,""), textvariable=chour, bg=yellow)
+chillhourEntry= Entry(root, width=3, font=("Arial",18,""), textvariable=chour, bg=timerEntryBG, fg=timerEntryFG)
 chillhourEntry.place(x=80,y=60)
 
-chillminuteEntry= Entry(root, width=3, font=("Arial",18,""), textvariable=cminute, bg=yellow)
+chillminuteEntry= Entry(root, width=3, font=("Arial",18,""), textvariable=cminute, bg=timerEntryBG, fg=timerEntryFG)
 chillminuteEntry.place(x=130,y=60)
 
-chillsecondEntry= Entry(root, width=3, font=("Arial",18,""), textvariable=csecond, bg=yellow)
+chillsecondEntry= Entry(root, width=3, font=("Arial",18,""), textvariable=csecond, bg=timerEntryBG, fg=timerEntryFG)
 chillsecondEntry.place(x=180,y=60)
 
-tasklabel = Label(root, font=("Arial",18,""), bg=purple, fg="white")
-btn = Button(root, text='Start', bd='5', font=("Arial",18,""), bg=blue)
+tasklabel = Label(root, font=("Arial",18,"bold"), bg=taskLabelGB, fg=taskLabelFG)
+btn = Button(root, text='Start', bd='5', font=("Arial",18,""), bg=btnBG, fg=btnFG)
 
 # interval
-repeatEntry= Entry(root, width=3, font=("Arial",18,""), textvariable=repeat, bg=yellow)
+repeatEntry= Entry(root, width=3, font=("Arial",18,""), textvariable=repeat, bg=timerEntryBG, fg=timerEntryFG)
 repeatEntry.place(x=130,y=100)
 
 def new_layout(repeatTime):
@@ -139,9 +143,6 @@ def submit():
 		# 50min: 0sec)
 		hours=0
 		if mins >60:
-			
-			# divmod(firstvalue = temp//60, secondvalue
-			# = temp%60)
 			hours, mins = divmod(mins, 60)
 		
 		# using format () method to store the value up to
@@ -163,7 +164,7 @@ def submit():
 				temp = chilltmp
 				worktime += 1
 				work = False
-				tasklabel.config(text='Relax')
+				tasklabel.config(text='Break')
 				worklabel.config(text='Work: %d/%d' %(worktime, repeatTime))
 			else:
 				temp = worktimer
