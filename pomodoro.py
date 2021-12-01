@@ -5,14 +5,13 @@ from tkinter import messagebox
 FONT = "Segoe UI"
 FONT_S = 10 # Small
 FONT_M = 18 # Medium
-BACKGROUND = "#ff6347"
-TIMER_ENTRY_BG = "#ff8064" # light tomato
-TIMER_ENTRY_FG = "white"
+BACKGROUND = "#fde02d" # yellow
+TIMER_ENTRY_BG = "#a2d82b" # green
+TIMER_ENTRY_FG = "black"
 LABEL_BG = BACKGROUND
-LABEL_FG = "white"
-LABEL_HIGHLIGHT = "red"
-BTN_BG = "#ffef00"
-BTN_FG = "black"
+LABEL_FG = "black"
+BTN_BG = "#f00972" # pink
+BTN_FG = "white"
 
 # creating Tk window
 root = Tk()
@@ -74,8 +73,17 @@ class ClockEntry:
                 label_font_size=FONT_S,
                 label_bg=LABEL_BG,
                 label_fg=LABEL_FG):
+        self.label_padding_right = padding_right
         self.entry_label = Label(root, text=text, font=(self.font_family, label_font_size, ""), bg=label_bg, fg=label_fg)
-        self.entry_label.place(x=self.entry_x - (padding_right or self.entry_padding), y=self.entry_y)
+        self.entry_label.place(x=self.entry_x - (self.label_padding_right or self.entry_padding), y=self.entry_y)
+
+    def hide_entry(self):
+        self.entry.place_forget()
+        if self.entry_label: self.entry_label.place_forget()
+
+    def show_entry(self):
+        self.entry.place(x=self.entry_x, y=self.entry_y)
+        if self.entry_label: self.entry_label.place(x=self.entry_x - (self.label_padding_right or self.entry_padding), y=self.entry_y)
     
 
 class ClockHMS:
@@ -117,8 +125,12 @@ class ClockHMS:
                 label_font_size=FONT_S,
                 label_bg=LABEL_BG,
                 label_fg=LABEL_FG):
+        self.label_padding_right = padding_right
         self.clock_label = Label(root, text=text, font=(self.font_family, label_font_size, ""), bg=label_bg, fg=label_fg)
-        self.clock_label.place(x=self.entry_x - (padding_right or self.entry_padding), y=self.entry_y)
+        self.clock_label.place(x=self.entry_x - (self.label_padding_right or self.entry_padding), y=self.entry_y)
+
+    def set_label_text(self, text):
+        self.clock_label.config(text=text)
 
     def get_seconds(self):
         try:
@@ -136,13 +148,17 @@ class ClockHMS:
         self.minute.disabled()
         self.second.disabled()
 
-    def enabled_clock(self):
-        self.hour.enabled()
-        self.minute.enabled()
-        self.second.enabled()
+    def hide_clock(self):
+        self.hour.hide_entry()
+        self.minute.hide_entry()
+        self.second.hide_entry()
+        if self.clock_label: self.clock_label.place_forget()
 
-    def change_label_color(self, background_color=LABEL_HIGHLIGHT):
-        self.clock_label.config(bg=background_color)
+    def show_clock(self):
+        self.hour.show_entry()
+        self.minute.show_entry()
+        self.second.show_entry()
+        if self.clock_label: self.clock_label.place(x=self.entry_x - (self.label_padding_right or self.entry_padding), y=self.entry_y)
 
 work_clock = ClockHMS(120, 20, 50)
 work_clock.set_label("Work", padding_right=90)
@@ -156,7 +172,12 @@ long_break_clock.set_label("Long Break", padding_right=90)
 session_clock = ClockEntry(120, 140)
 session_clock.set_label("Session", padding_right=90)
 
-btn = Button(root, text='Start', bd='5', font=(FONT,FONT_M,""), bg=BTN_BG, fg=BTN_FG)
+start_btn = Button(root, text='Start', bd='5', font=(FONT,FONT_M,""), bg=BTN_BG, fg=BTN_FG)
+stop_btn = Button(root, text='Stop', bd='5', font=(FONT,FONT_M,""), bg=BTN_BG, fg=BTN_FG)
+
+countdown_clock = ClockHMS(78, 80, 50)
+countdown_clock.disabled_clock()
+countdown_clock.hide_clock()
 
 def decrement_clock(clock, seconds):
     while seconds >= 0:
@@ -170,6 +191,22 @@ def decrement_clock(clock, seconds):
         time.sleep(1)
         seconds -= 1
 
+def show_countdown_layout():
+    work_clock.hide_clock()
+    short_break_clock.hide_clock()
+    long_break_clock.hide_clock()
+    session_clock.hide_entry()
+    start_btn.place_forget()
+    countdown_clock.show_clock()
+
+def hide_countdown_layout():
+    work_clock.show_clock()
+    short_break_clock.show_clock()
+    long_break_clock.show_clock()
+    session_clock.show_entry()
+    start_btn.place(x=120, y=180)
+    countdown_clock.hide_clock()
+
 def start_clock():
     work = work_clock.get_seconds()
     shortbreak = short_break_clock.get_seconds()
@@ -177,41 +214,34 @@ def start_clock():
     session = session_clock.get_int()
 
     if work >= 0 and shortbreak >= 0 and longbreak >= 0 and session >= 0:
-        work_clock.disabled_clock()
-        short_break_clock.disabled_clock()
-        long_break_clock.disabled_clock()
-        session_clock.disabled()
+        show_countdown_layout()
+        counter_label = Label(root, text=f'Work\nSession: 0/{session}', font=(FONT, FONT_M, ""), bg=BACKGROUND, fg=LABEL_FG)
+        counter_label.place(x=83, y=160)
 
-        task = 0
-        counter = 0
-        while session > 0:
+        task, counter, times = 0, 0, session
+        while times > 0:
             if task == 0:
-                work_clock.change_label_color()
-                counter = (counter + 1) % 4
-                decrement_clock(work_clock, work)
-                session -= 1
-                session_clock.set_text("{0:2d}".format(session))
-                work_clock.change_label_color(BACKGROUND)
+                counter += 1
+                counter_label.config(text=f'Work\nSession: {counter}/{session}')
+                decrement_clock(countdown_clock, work)
+                times -= 1
                 task = 2 if counter % 4 == 0 else 1
             elif task == 1:
-                short_break_clock.change_label_color()
-                decrement_clock(short_break_clock, shortbreak)
-                short_break_clock.change_label_color(BACKGROUND)
+                counter_label.config(text=f'Short Break\nSession: {counter}/{session}')
+                decrement_clock(countdown_clock, shortbreak)
                 task = 0
             else:
-                long_break_clock.change_label_color()
-                decrement_clock(long_break_clock, longbreak)
-                long_break_clock.change_label_color(BACKGROUND)
+                counter_label.config(text=f'Long Break\nSession: {counter}/{session}')
+                decrement_clock(countdown_clock, longbreak)
                 task = 0
     
-        work_clock.enabled_clock()
-        short_break_clock.enabled_clock()
-        long_break_clock.enabled_clock()
-        session_clock.enabled()
+        messagebox.showinfo("Alarm", "Time's up!")
+        hide_countdown_layout()
+        counter_label.place_forget()
 
 def main():
-    btn.config(command=start_clock)
-    btn.place(x=120, y=180)
+    start_btn.config(command=start_clock)
+    start_btn.place(x=120, y=180)
     root.mainloop()
 
 if __name__ == "__main__":
