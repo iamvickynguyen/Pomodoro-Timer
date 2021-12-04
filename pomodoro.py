@@ -5,13 +5,17 @@ from tkinter import messagebox
 FONT = "Segoe UI"
 FONT_S = 10 # Small
 FONT_M = 18 # Medium
-BACKGROUND = "#fde02d" # yellow
-TIMER_ENTRY_BG = "#a2d82b" # green
+BACKGROUND = "#1FB2FD" # blue
+TIMER_ENTRY_BG = "#FED818" # yellow
 TIMER_ENTRY_FG = "black"
 LABEL_BG = BACKGROUND
 LABEL_FG = "black"
-BTN_BG = "#f00972" # pink
+BTN_BG = "#FF1E8C" # pink
 BTN_FG = "white"
+
+BREAK_MESSAGE = "Break time!"
+WORK_MESSAGE = "Work!"
+END_PROGRAM_MESSAGE = "Well done!"
 
 # creating Tk window
 root = Tk()
@@ -226,16 +230,19 @@ def start_clock():
                 decrement_clock(countdown_clock, work)
                 times -= 1
                 task = 2 if counter % 4 == 0 else 1
+                messagebox.showinfo("Alarm", BREAK_MESSAGE)
             elif task == 1:
                 counter_label.config(text=f'Short Break\nSession: {counter}/{session}')
                 decrement_clock(countdown_clock, shortbreak)
                 task = 0
+                messagebox.showinfo("Alarm", WORK_MESSAGE)
             else:
                 counter_label.config(text=f'Long Break\nSession: {counter}/{session}')
                 decrement_clock(countdown_clock, longbreak)
                 task = 0
+                messagebox.showinfo("Alarm", WORK_MESSAGE)
     
-        messagebox.showinfo("Alarm", "Time's up!")
+        messagebox.showinfo("Alarm", END_PROGRAM_MESSAGE)
         hide_countdown_layout()
         counter_label.place_forget()
 
