@@ -39,7 +39,12 @@ class ClockEntry:
         self.entry_fg = entry_fg
 
         self.text = StringVar()
-        self.entry = Entry(root, width=3, font=(self.font_family, self.font_size, ""), textvariable=self.text, bg=self.entry_bg, fg=self.entry_fg)
+        self.entry = Entry(root,
+                            width=3,
+                            font=(self.font_family, self.font_size, ""),
+                            textvariable=self.text, bg=self.entry_bg, fg=self.entry_fg,
+                            disabledbackground=self.entry_bg,
+                            disabledforeground=self.entry_fg)
         self.entry.place(x=self.entry_x, y=self.entry_y)
 
         self.reset()
