@@ -1,4 +1,5 @@
 import time
+import beepy as beep
 from tkinter import *
 from tkinter import messagebox
 
@@ -235,18 +236,22 @@ def start_clock():
                 decrement_clock(countdown_clock, work)
                 times -= 1
                 task = 2 if counter % 4 == 0 else 1
+                beep.beep(6)
                 messagebox.showinfo("Alarm", BREAK_MESSAGE)
             elif task == 1:
                 counter_label.config(text=f'Short Break\nSession: {counter}/{session}')
                 decrement_clock(countdown_clock, shortbreak)
                 task = 0
+                beep.beep(6)
                 messagebox.showinfo("Alarm", WORK_MESSAGE)
             else:
                 counter_label.config(text=f'Long Break\nSession: {counter}/{session}')
                 decrement_clock(countdown_clock, longbreak)
                 task = 0
+                beep.beep(6)
                 messagebox.showinfo("Alarm", WORK_MESSAGE)
     
+        beep.beep(6)
         messagebox.showinfo("Alarm", END_PROGRAM_MESSAGE)
         hide_countdown_layout()
         counter_label.place_forget()
