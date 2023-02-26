@@ -1,18 +1,21 @@
 # Pomodoro Timer
 A pomodoro desktop timer that keeps you stay focus
 
-![Home](img/home.png)
 *Home Screen*
 
+![Home](img/home.png)
+
 </br>
 
-![Countdown](img/countdown.png)
 *Countdown*
 
+![Countdown](img/countdown.png)
+
 </br>
 
-![Alert](img/alert.png)
 *Alert*
+
+![Alert](img/alert.png)
 
 ## How to run
 
